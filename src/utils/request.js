@@ -1,21 +1,21 @@
 export default (params) => {
+	// 加载中
+	uni.hideLoading({
+		title: '加载中'
+	})
+	
 	return new Promise((resolve, reject) => {
-		
-		// 加载中
-		uni.hideLoading({
-			title: '加载中'
-		})
-		
+
 		wx.request({
 			...params,
 			success(res) {
-				resolve(res)
+				resolve(res.data)
 			},
 			fail(err) {
 				reject(err)
 			},
 			complete() {
-				// uni.hideLoading()
+				uni.hideLoading()
 			}
 		})
 	})

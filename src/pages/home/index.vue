@@ -55,7 +55,7 @@
 					{title: "最新"},
 					{title: "专辑"},
 				],
-				current: 0
+				current: 1
 			}
 		},
 		methods: {
@@ -72,17 +72,17 @@
 </script>
 
 <style lang="scss">
-.home_tab_title {
-	position: relative;
-}	
-.title_inner {
-	width: 60%;
-	margin: 0 auto;
-}
-.iconsearch {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	right: 5%;
-}
+	.home_tab_title {
+		position: relative;
+	}	
+	.title_inner {
+		width: 60%;
+		margin: 0 auto;
+	}
+	.iconsearch {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		right: 5%;
+	}
 </style>

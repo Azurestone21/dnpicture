@@ -3,12 +3,13 @@
 	<scroll-view scroll-y @scrolltolower="handleToLower" class="recommend_view" v-if="recommends.length>0">
 		<!-- 推荐 -->
 		<view class="recommend_wrap">
-			<view class="recommend_item"
+			<navigator class="recommend_item"
 				v-for="item in recommends"
 				:key="item.id"
+				:url="`/pages/album/index?id=${item.target}`"
 			>
 				<image :src="item.thumb" mode="widthFix"></image>
-			</view>
+			</navigator>
 		</view>
 		
 		<!-- 月份 -->
@@ -24,10 +25,12 @@
 		</view>
 		<view class="month_content">
 			<view class="month_content_item"
-				v-for="item in monthes.items"
+				v-for="(item,index) in monthes.items"
 				:key="item.id"
 			>
-				<image :src="item.thumb + item.rule.replace('$<Height>', 360)" mode="aspectFill"></image>
+				<go-detail :list="monthes.items" :index="index">
+					<image :src="item.thumb + item.rule.replace('$<Height>', 360)" mode="aspectFill"></image>
+				</go-detail>
 			</view>
 		</view>
 		
@@ -38,9 +41,11 @@
 			</view>
 			<view class="hot_content">
 				<view class="hot_item"
-					v-for="item in hots"
+					v-for="(item,index) in hots"
 					:key="item.id">
-					<image :src="item.thumb" mode="widthFix"></image>
+					<go-detail :list="hots" :index="index">
+						<image :src="item.thumb" mode="widthFix"></image>
+					</go-detail>
 				</view>
 			</view>
 		</view>
@@ -48,7 +53,8 @@
 </template>
 
 <script>
-	import moment from "moment"
+	import moment from "moment";
+	import goDetail from "@/pages/components/goDetail.vue"
 	export default {
 		data() {
 			return {
@@ -59,7 +65,7 @@
 				// 请求的数据
 				params: {
 					// 获取几条数据
-					limit: 30,
+					limit: 10,
 					// 关键字
 					order: "hot",
 					// 跳过几条数据
@@ -70,18 +76,22 @@
 			}
 		},
 		mounted() {
+			// 修改页面标题
+			uni.setNavigationBarTitle({
+				title: "首页"
+			})
 			this.getData();
 		},
 		methods: {
 			// 获取数据事件
 			getData() {
 				this.request({
-					url: "https://result.eolinker.com/PH6tj4h20f6d1ca01405596638e254cd9e354c4774d7610?uri=/homepage/vertical",
+					url: "http://157.122.54.189:9088/image/v3/homepage/vertical",
 					data: this.params,
 				}).then(result=>{
-					console.log(result);
+					// console.log(result);
 					
-					if(result.data.res.vertical === 0) {
+					if(result.res.vertical.length === 0) {
 						this.hasMore = false;
 						return;
 					}
@@ -89,9 +99,9 @@
 					if(this.recommends.length === 0) {
 						// 第一次请求数据
 						// 推荐模块
-						this.recommends = result.data.res.homepage[1].items;
+						this.recommends = result.res.homepage[1].items;
 						// 月份模块
-						this.monthes = result.data.res.homepage[2];
+						this.monthes = result.res.homepage[2];
 						// 改变月份格式  24 / 1月
 						this.monthes.MM = moment(this.monthes.stime).format("MM");
 						this.monthes.DD = moment(this.monthes.stime).format("DD");
@@ -101,7 +111,7 @@
 					// 热门模块
 					// this.hots = result.data.res.vertical;
 					// 数据拼接
-					this.hots = [...this.hots,...result.data.res.vertical];
+					this.hots = [...this.hots,...result.res.vertical];
 				})
 			},
 			
@@ -126,6 +136,9 @@
 			   }
 			   
 			},
+		},
+		components: {
+			goDetail
 		}
 	}
 </script>
